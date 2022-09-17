@@ -36,7 +36,9 @@ To ease up the process, we will use a [boiler-plate](https://github.com/sankur-c
 
 First and foremost, we will make sure all **pre-requisites are met** as mentioned in the `README.md` file of the repository. Installations on their respective documentations are pretty straight-forward and easy to follow. later, verify your installations through cli.
 
-![Installation Verification](/assets/images/2022-09-13-01-intallations.png)
+![Installation Verification](/assets/images/2022-09-13-01-intallations.png) |
+|:--:| 
+| *Verification of Installations* |
 
 <br><br>
 
@@ -47,7 +49,7 @@ Formerly, copy your static website code in `website` folder of the repository <b
 
 <br>
 
-To build a docker image, there is a generic Dockerfile already present in the repository. Let's break it out for understanding : 
+To build a docker image, there is a generic `Dockerfile` already present in the repository. Let's break it out for understanding : 
 - `FROM nginx` : Pulls latest [nginx](https://hub.docker.com/_/nginx/tags) image from docker hub
 - `LABEL maintainer="Ankur Singh"` : Just a label. you can add your name as maintainer if you want
 - `COPY website/ /usr/share/nginx/html/` : Copies your website code to appropriate folder
@@ -66,3 +68,25 @@ What will this command do ?
 ![WebApp Containerization](/assets/images/2022-09-13-01-containerization.png)
 
 Also visit `127.0.0.1:5000` in your browser to check if your static web application is accessible
+
+Congrats !! You have successfully containerized your application. 
+
+Once tested, we won't need this container anymore.<br> 
+Free the resources by running `make stop containerName=container_app` (check upon the **stop** target in _Makefile_)
+
+<br><br>
+
+Moving further we will create our local cluster using `kind` and for the cluster to be able to get the image of our application (*mywebapp:1.0*), we will create a local image registry to store the image and link it to the cluster. 
+
+With Makefile, this becomes a cakewalk. Run `make create_kind_cluster_with_registry clusterName=webapplication` 
+<br>
+
+This command will execute the **create_kind_cluster_with_registry** target in make file. This particular target in turn calls **create_kind_cluster** which runs & **connect_registry_to_kind** targets which in turn call other targets and so on. (check upon other target calls in _Makefile_) 
+<br>
+
+Eventually : 
+- A local kubernetes cluster called webapplication will be created
+- A local registry will be created as a container(local-registry) to store our website image
+- Image registry will be connected to out local kubernetes cluster for it to pull our image during deployment
+
+
